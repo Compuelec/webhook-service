@@ -52,6 +52,9 @@ export class WebhookController {
     const hmac = crypto.createHmac('sha1', secretBytes);
     const digest = 'sha1=' + hmac.update(JSON.stringify(data)).digest('hex');
 
+    console.log('Firma Calculada:', digest);
+    console.log('Firma Recibida:', signatureString);
+
     // Realizamos una comparación simple de cadenas
     return digest === signatureString;
   }
