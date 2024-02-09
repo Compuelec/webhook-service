@@ -24,7 +24,7 @@ export class WebhookController {
       return;
     }
 
-    const payload = req.body;
+    // const payload = req.body; // por si lo requieres para almacenar la información del payload
 
     this.executeLocalCommands(project, rutaProyecto);
 
@@ -51,22 +51,25 @@ export class WebhookController {
   }
 
   private executeLocalCommands(project: string, ruta: string): void {
+    const directorioOriginal = process.cwd(); // Almacena el directorio actual
+
     try {
-      // Change to the project directory
+      // Cambia al directorio del proyecto
       process.chdir(ruta);
-      // Execute git pull
+
+      // Ejecuta git pull
       execSync('git pull', { stdio: 'inherit' });
 
-      // Execute npm ci
+      // Ejecuta npm ci
       // execSync('npm ci', { stdio: 'inherit' });
 
-      // Execute npm run server
+      // Ejecuta npm run server
       // execSync('npm run server', { stdio: 'inherit' });
     } catch (error) {
       console.error('Error executing local commands:', error.message);
     } finally {
-      // Return to the original directory
-      process.chdir(__dirname);
+      // Vuelve al directorio original
+      process.chdir(directorioOriginal);
     }
   }
 }
