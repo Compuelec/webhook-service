@@ -9,6 +9,15 @@ async function bootstrap() {
 
   app.enableCors();
 
+  app.use((req, res, next) => {
+    res.setTimeout(120000, () => {
+      console.log('Request has timed out.');
+      res.send(408);
+    });
+
+    next();
+  });
+
   const port = parseInt(process.env.PORT, 10);
   await app.listen(port);
   console.log(`Application is running on: ${await app.getUrl()}`);
