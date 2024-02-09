@@ -52,10 +52,13 @@ export class WebhookController {
     const hmac = crypto.createHmac('sha1', secretBytes);
     const digest = 'sha1=' + hmac.update(JSON.stringify(data)).digest('hex');
 
-    return crypto.timingSafeEqual(
-      Buffer.from(digest),
-      Buffer.from(signatureString),
+    // Asegurémonos de que ambas cadenas tengan la misma longitud
+    const compareResult = crypto.timingSafeEqual(
+      Buffer.from(digest, 'utf-8'),
+      Buffer.from(signatureString, 'utf-8'),
     );
+
+    return compareResult;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
