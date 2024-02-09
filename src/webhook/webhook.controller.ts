@@ -1,11 +1,15 @@
 // src/webhook/webhook.controller.ts
 import { Controller, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { execSync } from 'child_process';
 import crypto from 'crypto';
 
 const SECRET_MAP: Record<string, string> = {
-  prueba: 'clave_secreta_1',
-  project2: 'clave_secreta_2',
+  prueba: 'losbar191184',
+};
+
+const RUTA_PROYECTO: Record<string, string> = {
+  prueba: '../webhook-prueba',
 };
 
 @Controller('webhook')
@@ -14,6 +18,7 @@ export class WebhookController {
   handleWebhook(@Req() req: Request, @Res() res: Response): void {
     const project = req.params.project;
     const secret = SECRET_MAP[project];
+    const rutaProyecto = RUTA_PROYECTO[project];
 
     if (
       !secret ||
@@ -26,7 +31,7 @@ export class WebhookController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const payload = req.body;
 
-    this.ejecutarComandosLocales(project);
+    this.ejecutarComandosLocales(project, rutaProyecto);
 
     res.status(200).send('Webhook recibido correctamente');
   }
@@ -54,9 +59,23 @@ export class WebhookController {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private ejecutarComandosLocales(project: string): void {
-    // Implementa la lógica para ejecutar comandos locales en el proyecto
-    // Puedes utilizar execSync o cualquier otra forma de ejecución de comandos que prefieras
-    // ...
+  private ejecutarComandosLocales(project: string, ruta: string): void {
+    try {
+      // Cambia al directorio del proyecto
+      process.chdir(ruta);
+      // Ejecuta git pull
+      execSync('git pull', { stdio: 'inherit' });
+
+      // Ejecuta npm ci
+      // execSync('npm ci', { stdio: 'inherit' });
+
+      // Ejecuta npm run server
+      // execSync('npm run server', { stdio: 'inherit' });
+    } catch (error) {
+      console.error('Error al ejecutar comandos locales:', error.message);
+    } finally {
+      // Vuelve al directorio original
+      process.chdir(__dirname);
+    }
   }
 }
