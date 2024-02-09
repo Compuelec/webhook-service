@@ -22,7 +22,7 @@ export class WebhookController {
 
     if (
       !secret ||
-      !this.verificarFirma(req.body, req.headers['x-hub-signature'], secret)
+      !this.verificarFirma(req.body, req.headers['x-hub-signature-256'], secret)
     ) {
       res.status(403).send('Firma no válida');
       return;
