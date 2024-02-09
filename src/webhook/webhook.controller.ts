@@ -2,7 +2,7 @@
 import { Controller, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { execSync } from 'child_process';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 const SECRET_MAP: Record<string, string> = {
   prueba: 'losbar191184',
