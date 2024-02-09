@@ -32,20 +32,22 @@ export class WebhookController {
   }
 
   private verifySignature(req: Request, secret: string): boolean {
-    const signature = req.headers.get('x-hub-signature-256');
+    const signature = req.headers['x-hub-signature-256'];
 
     if (!signature) {
       return false;
     }
 
+    const signatureString = Array.isArray(signature) ? signature[0] : signature;
+
     const hmac = crypto.createHmac('sha256', secret);
     const digest = `sha256=${hmac.update(JSON.stringify(req.body)).digest('hex')}`;
 
     console.log('Calculated Signature:', digest);
-    console.log('Received Signature:', signature);
+    console.log('Received Signature:', signatureString);
 
     // Perform a simple string comparison
-    return digest === signature;
+    return digest === signatureString;
   }
 
   private executeLocalCommands(project: string, ruta: string): void {
