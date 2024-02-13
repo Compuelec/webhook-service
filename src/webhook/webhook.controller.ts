@@ -3,28 +3,20 @@ import { Request, Response } from 'express';
 import { execSync } from 'child_process';
 import * as crypto from 'crypto';
 
-const SECRET_MAP: Record<string, string> = {
-  prueba: 'losbar191184',
-};
-
-const RUTA_PROYECTO: Record<string, string> = {
-  prueba: '../webhook-prueba',
-};
-
 @Controller('webhook')
 export class WebhookController {
   @Post(':project')
   handleWebhook(@Req() req: Request, @Res() res: Response): void {
     const project = req.params.project;
-    const secret = SECRET_MAP[project];
-    const rutaProyecto = RUTA_PROYECTO[project];
+    const secret = process.env.SECRET_MAP;
+    const rutaProyecto = process.env.RUTA_BASE + project;
 
     if (!secret || !this.verifySignature(req, secret)) {
       res.status(401).send('Unauthorized');
       return;
     }
 
-    // const payload = req.body; // por si lo requieres para almacenar la información del payload
+    // const payload = req.body; // por si lo requieres para almacenar la información del payloadser
 
     this.executeLocalCommands(project, rutaProyecto);
 
